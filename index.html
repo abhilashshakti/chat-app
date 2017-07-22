@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Real-time Super Chat!</title>
+</head>
+
+<body>
+    <h1>Real-time Super Chat!</h1>
+
+    <form id="chat_form">
+        <input type='text' name='message' id='inputmessage' placeholder='Your message...'>
+        <input type="submit" value="Send" id="submitbutton">
+    </form>
+
+    <p id="messagelist"></p>
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        var socket = io.connect('http://localhost:8080');
+
+        // Prompt the user for the username
+        var username = prompt('What\'s your username');
+
+        document.title = username + "Real-time Super Chat!";
+        socket.emit('client_registration', username);
+
+        socket.on('server_message', function(message) {
+            console.log('message received: ' + message);
+            $('#messagelist').append('<p>' + message + '</p>');
+        });
+
+        $('#submitbutton').click(function() {
+            socket.emit('client_message', username + ": " + $('#inputmessage').val());
+            return false;
+        });
+        
+//        $('#chat_form').submit(function() {
+//            var message = $('#inputmessage').val();
+//            socket.emit('client_message', message);
+//            return false;
+//        })
+
+    </script>
+</body>
+
+</html>
